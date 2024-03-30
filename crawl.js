@@ -2,25 +2,25 @@ const { JSDOM } = require("jsdom"); // use this lib to convert the html string t
 // so we can grap the a tag and accses the href
 
 async function crawlPage(baseURL, currentURL, pages) {
-  // if this is an offsite URL, bail immediately
+  // if this is an offsite URL, stop crawling immediately
   const currentUrlObj = new URL(currentURL);
   const baseUrlObj = new URL(baseURL);
   if (currentUrlObj.hostname !== baseUrlObj.hostname) {
     return pages;
   }
 
-  const normalizedURL = getNormalURL(currentURL);
-  // if we've already visited this page
+  const regularUrl = getNormalURL(currentURL);
+  // if we have already visited this page
   // just increase the count and don't repeat
   // the http request
-  if (pages[normalizedURL] > 0) {
-    pages[normalizedURL]++;
+  if (pages[regularUrl] > 0) {
+    pages[regularUrl]++;
     return pages;
   }
 
   // initialize this page in the map
   // since it doesn't exist yet
-  pages[normalizedURL] = 1;
+  pages[regularUrl] = 1;
 
   // fetch and parse the html of the currentURL
   console.log(`crawling ${currentURL}`);
@@ -28,12 +28,12 @@ async function crawlPage(baseURL, currentURL, pages) {
   try {
     const resp = await fetch(currentURL);
     if (resp.status > 399) {
-      console.log(`Got HTTP error, status code: ${resp.status}`);
+      console.log(`error was found in the http, status code: ${resp.status}`);
       return pages;
     }
     const contentType = resp.headers.get("content-type");
     if (!contentType.includes("text/html")) {
-      console.log(`Got non-html response: ${contentType}`);
+      console.log(`invalid data type response: ${contentType}`);
       return pages;
     }
     htmlBody = await resp.text();
