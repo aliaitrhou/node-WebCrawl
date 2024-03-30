@@ -1,6 +1,31 @@
 const { JSDOM } = require("jsdom"); // use this lib to convert the html string to real document object modele
 // so we can grap the a tag and accses the href
 
+async function crawlPage(currentUrl) {
+  console.log(`actively crawling: ${currentUrl}`);
+  try {
+    const resp = await fetch(currentUrl);
+    if (resp.status > 399) {
+      console.log(
+        `error in fetch with status code: ${resp.status}, on page : ${currentUrl}`,
+      );
+      return;
+    }
+    const typeOfContent = resp.headers.get("content-type");
+    if (!typeOfContent.includes("text/html")) {
+      console.log(
+        `non html response, content type: ${typeOfContent}, on page ${currentUrl}`,
+      );
+      return;
+    }
+    console.log(await resp.text());
+  } catch (err) {
+    console.log(
+      "we have a problem which is :" + err.message + "and " + err.status,
+    );
+  }
+}
+
 function getURLsFromHTML(htmlBody, baseURL) {
   const urls = [];
   // creat a document object modele
@@ -40,4 +65,5 @@ function getNormalURL(urlStr) {
 module.exports = {
   getNormalURL,
   getURLsFromHTML,
+  crawlPage,
 };
