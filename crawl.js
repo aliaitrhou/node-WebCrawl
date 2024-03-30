@@ -88,5 +88,5 @@ function getNormalURL(urlStr) {
 module.exports = {
   getNormalURL,
   getURLsFromHTML,
-  crawlPage: crawler,
+  crawler,
 };
