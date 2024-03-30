@@ -1,7 +1,7 @@
 const { JSDOM } = require("jsdom"); // use this lib to convert the html string to real document object modele
 // so we can grap the a tag and accses the href
 
-async function crawlPage(baseURL, currentURL, pages) {
+async function crawler(baseURL, currentURL, pages) {
   // if this is an offsite URL, stop crawling immediately
   const currentUrlObj = new URL(currentURL);
   const baseUrlObj = new URL(baseURL);
@@ -43,7 +43,7 @@ async function crawlPage(baseURL, currentURL, pages) {
 
   const nextURLs = getURLsFromHTML(htmlBody, baseURL);
   for (const nextURL of nextURLs) {
-    pages = await crawlPage(baseURL, nextURL, pages);
+    pages = await crawler(baseURL, nextURL, pages);
   }
 
   return pages;
@@ -88,5 +88,5 @@ function getNormalURL(urlStr) {
 module.exports = {
   getNormalURL,
   getURLsFromHTML,
-  crawlPage,
+  crawlPage: crawler,
 };
