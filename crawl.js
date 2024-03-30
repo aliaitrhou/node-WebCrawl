@@ -1,3 +1,33 @@
+const { JSDOM } = require("jsdom"); // use this lib to convert the html string to real document object modele
+// so we can grap the a tag and accses the href
+
+function getURLsFromHTML(htmlBody, baseURL) {
+  const urls = [];
+  // creat a document object modele
+  const dom = new JSDOM(htmlBody);
+  const linksArr = dom.window.document.querySelectorAll("a");
+  for (const link of linksArr) {
+    if (link.href.slice(0, 1) === "/") {
+      // relative
+      try {
+        const validUrl = new URL(`${baseURL}${link.href}`);
+        urls.push(validUrl.href);
+      } catch (err) {
+        console.log(`not a valid url (relative), ${err.message}`);
+      }
+    } else {
+      // absolute
+      try {
+        const validUrl = new URL(link.href);
+        urls.push(validUrl.href);
+      } catch (err) {
+        console.log(`not a valid url (absolute), ${err.message}`);
+      }
+    }
+  }
+  return urls;
+}
+
 function getNormalURL(urlStr) {
   const url = new URL(urlStr);
   const host = `${url.hostname}${url.pathname}`;
@@ -9,4 +39,5 @@ function getNormalURL(urlStr) {
 
 module.exports = {
   getNormalURL,
+  getURLsFromHTML,
 };
